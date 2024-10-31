@@ -25,7 +25,7 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/drone', authenticateToken, (req, res) => {
-    res.json({ message: "ML drone page here" });
+    res.json({ message: "ML drone page here", user: req.user });
 });
 
 const PORT = process.env.PORT || 3000;
