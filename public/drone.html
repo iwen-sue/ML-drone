@@ -1,0 +1,167 @@
+<style>
+    body {
+        margin: 0;
+    }
+</style>
+
+<script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+
+<script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.150.1/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.150.1/examples/jsm/"
+      }
+    }
+  </script>
+
+<script type="module">
+    import * as THREE from 'three'
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+
+    const body = document.querySelector('body')
+
+    const loader = new GLTFLoader();
+
+    const scene = new THREE.Scene()
+    const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+    )
+
+    const renderer = new THREE.WebGLRenderer()
+    renderer.shadowMap.enabled = true
+    renderer.setSize(window.innerWidth, window.innerHeight)
+    document.body.appendChild(renderer.domElement)
+
+    const light = new THREE.DirectionalLight(0xffffff, 1)
+    light.position.y = 4
+    light.position.z = 3
+    light.castShadow = true
+    scene.add(light)
+
+    class GameObject extends THREE.Object3D {
+        constructor() {
+            super();
+            this.receiveShadow = true;
+            this.castShadow = true;
+            scene.add(this);
+        }
+    }
+
+
+    class Player extends GameObject {
+    constructor() {
+        super();
+        this.velocity = new THREE.Vector3(0, 0, 0);
+        this.direction = new THREE.Vector3(0, 0, 0);
+        this.sensitivity = 0.001;
+        this.speed = 0.01;
+        this.friction = 0.9;
+        this.inputActions = {
+            'w': false,
+            'a': false,
+            's': false,
+            'd': false,
+            ' ': false,
+            'Shift': false
+        };
+        this.initPointerLock();
+        this.loadModel();
+        this.createInputs();
+    }
+
+    initPointerLock() {
+        this.controls = new PointerLockControls(this, document.body);
+        this.controls.maxPolarAngle = Math.PI / 2;
+        this.controls.minPolarAngle = Math.PI / 2;
+        document.body.addEventListener('click', () => this.controls.lock());
+        this.controls.addEventListener('lock', () => console.log('locked'));
+        this.controls.addEventListener('unlock', () => console.log('unlocked'));
+    }
+
+    loadModel() {
+        loader.load('/models/drone.glb', (gltf) => {
+            this.drone = gltf.scene;
+            this.drone.scale.set(0.25, 0.25, 0.25);
+            this.drone.position.set(0, 0.5, 0);
+            this.add(this.drone);
+        });
+    }
+
+    createInputs() {
+        window.addEventListener('keydown', (e) => {
+            if (this.inputActions[e.key] !== undefined) {
+                this.inputActions[e.key] = true;
+            }
+        });
+        window.addEventListener('keyup', (e) => {
+            if (this.inputActions[e.key] !== undefined) {
+                this.inputActions[e.key] = false;
+            }
+        });
+    }
+
+
+    update() {
+        if (this.inputActions['w']) {
+            this.direction.z = -1;
+        } else if (this.inputActions['s']) {
+            this.direction.z = 1;
+        } 
+        if (this.inputActions['a']) {
+            this.direction.x = -1;
+        } else if (this.inputActions['d']) {
+            this.direction.x = 1;
+        }
+
+        this.direction.normalize();
+
+        this.direction.applyQuaternion(this.controls.getObject().quaternion);
+
+        this.velocity.add(this.direction.multiplyScalar(this.speed));
+
+        this.velocity.multiplyScalar(this.friction);
+
+        if (this.inputActions[' ']) {
+            this.velocity.y += this.speed;
+        } else if (this.inputActions['Shift']) {
+            this.velocity.y += -this.speed;
+        } else {
+            this.velocity.y *= this.friction;
+        }
+
+        this.position.add(this.velocity);
+
+        this.drone.rotation.z = -this.velocity.x;
+        this.drone.rotation.x = this.velocity.z;
+
+        this.direction.set(0, 0, 0);
+    }
+}
+
+
+    const floor = new THREE.Mesh(
+        new THREE.PlaneGeometry(10, 10, 10, 10),
+        new THREE.MeshStandardMaterial({ color: 0x808080 })
+    )
+    floor.rotation.x = -Math.PI / 2
+    floor.position.y = -1
+    scene.add(floor)
+
+    const player = new Player()
+    player.add(camera)
+    camera.position.z = 3
+    camera.position.y = 2
+    camera.rotation.x = -0.25
+
+    function animate() {
+        requestAnimationFrame(animate)
+        renderer.render(scene, camera)
+        player.update()
+    }
+    animate()
+</script>
