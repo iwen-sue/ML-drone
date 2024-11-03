@@ -18,7 +18,7 @@ require('dotenv').config();
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:3000, https://comp4537t5frontend.netlify.app/',
+    origin: 'https://comp4537t5frontend.netlify.app/',
     credentials: true,
   }));
 app.use(bodyParser.json());
