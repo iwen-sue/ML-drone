@@ -27,7 +27,7 @@
     </style>
 </head>
 <body>
-    <h1>Image Caption Generator</h1>
+    <h1>Image-to-Text Generator</h1>
     <input type="file" id="imageInput" accept="image/*"><br><br>
     <button id="uploadButton">Generate Caption</button>
     <div id="captionResult"></div>
@@ -68,10 +68,10 @@
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                return response.text();
+                return response.json();
             })
-            .then(caption => {
-                captionResult.innerText = `Caption: ${caption}`;
+            .then(res => {
+                captionResult.innerText = `Caption: ${res.caption}`;
             })
             .catch(error => {
                 console.error('Error:', error);
