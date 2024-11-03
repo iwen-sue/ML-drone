@@ -1,14 +1,23 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const multer = require('multer');
+const cors = require('cors');
+
 const authController = require('./controllers/authController');
+const MLController = require('./controllers/MLController');
 const authenticateToken = require('./middleware/authMiddleware');
 const connectDB = require('./config/db');
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 connectDB();
 require('dotenv').config();
 
 const app = express();
+
+app.use(cors());
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.static('public')); // Serve static files
@@ -38,6 +47,8 @@ app.get('/js/main.js', (req, res) => {
     res.setHeader('Content-Type', 'application/javascript');
     res.sendFile(path.join(__dirname, 'public', 'js', 'main.js'));
 });
+
+app.post('/generate-caption', upload.single('file'), MLController.generateCaption);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

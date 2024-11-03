@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Caption Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #preview {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+        }
+        #captionResult {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        #uploadButton {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        #imageInput {
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Caption Generator</h1>
+    <input type="file" id="imageInput" accept="image/*"><br><br>
+    <button id="uploadButton">Generate Caption</button>
+    <div id="captionResult"></div>
+    <img id="preview" src="#" alt="Image Preview" style="display:none;">
+
+    <script>
+        document.getElementById('uploadButton').addEventListener('click', () => {
+            const input = document.getElementById('imageInput');
+            const file = input.files[0];
+
+            if (!file) {
+                alert('Please select an image file.');
+                return;
+            }
+
+            // Display the image preview
+            const preview = document.getElementById('preview');
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+
+            const url = '/generate-caption';
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // Display a loading message
+            const captionResult = document.getElementById('captionResult');
+            captionResult.innerText = 'Generating caption...';
+
+            fetch(url, {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(caption => {
+                captionResult.innerText = `Caption: ${caption}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                captionResult.innerText = 'An error occurred while generating the caption.';
+            });
+        });
+    </script>
+</body>
+</html>
