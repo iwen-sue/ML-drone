@@ -22,6 +22,7 @@ app.get('/', (req, res) => {
 
 app.get('/login', (req, res) => {
     res.sendFile(__dirname + '/public/login.html');
+    // res.json({ message: "Profile page here", user: req.user });
 });
 
 app.get('/drone', authenticateToken, (req, res) => {
