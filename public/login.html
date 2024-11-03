@@ -51,7 +51,7 @@
             });
             const data = await response.json();
             if (data.token) {
-                window.location.href = '/drone';
+                window.location.href = '/demo';
             } else {
                 alert(data.message);
             }
