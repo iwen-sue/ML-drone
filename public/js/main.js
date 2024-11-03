@@ -3,6 +3,7 @@ import { PointerLockControls } from 'https://cdn.jsdelivr.net/npm/three@0.146.0/
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 let audioInitialized = false;
+let positionalSound;
 
 // Scene setup
 const scene = new THREE.Scene();
@@ -65,8 +66,6 @@ scene.add(ambientLight);
 const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
 directionalLight.position.set(0, 1, 0);
 scene.add(directionalLight);
-
-
 
 // Add paintbrush model
 scene.add(camera);
@@ -139,7 +138,7 @@ document.addEventListener('click', function() {
         audioInitialized = true;
         const listener = new THREE.AudioListener();
         camera.add(listener);
-        const positionalSound = new THREE.PositionalAudio(listener);
+        positionalSound = new THREE.PositionalAudio(listener);
         const audioLoader = new THREE.AudioLoader();
         audioLoader.load('audio/elevator_bossa_nova.mp3', function(buffer) {
             positionalSound.setBuffer(buffer);
@@ -224,7 +223,7 @@ function checkInteractions() {
     // Check for radio interactions
     const radioIntersects = raycaster.intersectObject(radio);
     if (radioIntersects.length > 0 && radioIntersects[0].distance < interactionDistance) {
-        if (isInteracting) {
+        if (isInteracting && positionalSound) {
             if (positionalSound.isPlaying) {
                 positionalSound.pause();
             } else {
