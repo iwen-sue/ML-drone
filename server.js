@@ -30,6 +30,15 @@ app.get('/drone', authenticateToken, (req, res) => {
     // res.json({ message: "ML drone page here", user: req.user });
 });
 
+app.get('/gallery', authenticateToken, (req, res) => {
+    res.sendFile(__dirname + '/public/gallery.html');
+});
+
+app.get('/js/main.js', (req, res) => {
+    res.setHeader('Content-Type', 'application/javascript');
+    res.sendFile(path.join(__dirname, 'public', 'js', 'main.js'));
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
