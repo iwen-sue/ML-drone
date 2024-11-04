@@ -32,7 +32,7 @@ const generateCaption = async (req, res) => {
         },
         maxContentLength: Infinity,
         maxBodyLength: Infinity,
-      })
+      }, { timeout: 60000 })
       .then((response) => {
         res.send(response.data);
       })
