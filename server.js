@@ -17,10 +17,16 @@ require('dotenv').config();
 
 const app = express();
 
-app.use(cors({
-    origin: 'https://comp4537t5frontend.netlify.app',
+app.use(
+    cors({
+        origin: [
+        "https://comp4537t5frontend.netlify.app",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        ],
     credentials: true,
-  }));
+    })
+);
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.static('public')); // Serve static files
