@@ -1,9 +1,13 @@
 import * as THREE from 'three';
 import { PointerLockControls } from 'https://cdn.jsdelivr.net/npm/three@0.146.0/examples/jsm/controls/PointerLockControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { Client } from 'https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js';
 
 let audioInitialized = false;
 let positionalSound;
+
+// Initialize Gradio client
+const gradioClient = await Client.connect("pourgrammar/Salesforce-blip-4800");
 
 // Scene setup
 const scene = new THREE.Scene();
@@ -83,6 +87,7 @@ const canvases = [];
 const drawingContexts = [];
 const canvasTextures = [];
 const drawingData = new Array(4).fill(null);
+const smallCanvasButtons = [];
 
 function createCanvas(width, height, position, rotation) {
     // Create HTML canvas for drawing
@@ -110,11 +115,44 @@ function createCanvas(width, height, position, rotation) {
     return canvas;
 }
 
+async function canvasToBlob(canvas) {
+    return new Promise((resolve) => {
+        canvas.toBlob((blob) => {
+            resolve(blob);
+        }, 'image/png');
+    });
+}
+
+function createCanvasButton(canvas, index) {
+    const buttonGeometry = new THREE.BoxGeometry(0.8, 0.3, 0.1);
+    const buttonMaterial = new THREE.MeshBasicMaterial({ color: 0x4444ff });
+    const button = new THREE.Mesh(buttonGeometry, buttonMaterial);
+    
+    // Position button below its canvas
+    // Copy canvas position and adjust y coordinate down
+    button.position.copy(canvas.position);
+    button.position.y -= smallCanvasHeight/2 + 0.3;
+    button.rotation.copy(canvas.rotation);
+    
+    scene.add(button);
+    smallCanvasButtons.push(button);
+}
+
 // Create small canvases on opposite walls
 createCanvas(smallCanvasWidth, smallCanvasHeight, [-roomWidth/2 + 0.01, 2, -3], [0, Math.PI/2, 0]);
 createCanvas(smallCanvasWidth, smallCanvasHeight, [-roomWidth/2 + 0.01, 2, 3], [0, Math.PI/2, 0]);
 createCanvas(smallCanvasWidth, smallCanvasHeight, [roomWidth/2 - 0.01, 2, -3], [0, -Math.PI/2, 0]);
 createCanvas(smallCanvasWidth, smallCanvasHeight, [roomWidth/2 - 0.01, 2, 3], [0, -Math.PI/2, 0]);
+
+// Create buttons for the first 4 canvases (small ones)
+for (let i = 0; i < 4; i++) {
+    createCanvasButton(canvases[i], i);
+}
+
+// Helper function to convert canvas to base64 image
+function canvasToImage(canvas) {
+    return canvas.toDataURL('image/png').split(',')[1];
+}
 
 // Create main canvas
 const mainCanvas = createCanvas(bigCanvasWidth, bigCanvasHeight, [0, 3, -roomDepth/2 + 0.01], [0, 0, 0]);
@@ -262,15 +300,36 @@ function checkInteractions() {
         currentCanvas = null;
     }
     
-    // Check for button interaction
-    const buttonIntersects = raycaster.intersectObject(button);
+    const buttonIntersects = raycaster.intersectObjects(smallCanvasButtons);
     if (buttonIntersects.length > 0 && buttonIntersects[0].distance < interactionDistance) {
-        button.material.color.setHex(0x6666ff); // Highlight button
-        if (controls.isLocked && isDrawing) {
-            // Generate AI image on main canvas here =-)
+        const buttonIndex = smallCanvasButtons.indexOf(buttonIntersects[0].object);
+        buttonIntersects[0].object.material.color.setHex(0x6666ff); // Highlight button
+        
+        if (controls.isLocked && isInteracting && gradioClient) {
+            // Convert canvas to blob and send to API
+            canvasToBlob(drawingContexts[buttonIndex].canvas)
+                .then(async blob => {
+                    try {
+                        const result = await gradioClient.predict("/predict", [
+                            blob  // This will be automatically handled as a file
+                        ]);
+                        
+                        console.log("API Response:", result);
+                        // Here you can handle the response
+                        // result.data[0] should contain the generated text
+                        
+                    } catch (error) {
+                        console.error("Error calling Gradio API:", error);
+                    }
+                });
+            
+            isInteracting = false;
         }
     } else {
-        button.material.color.setHex(0x4444ff);
+        // Reset button colors if not hovering
+        smallCanvasButtons.forEach(button => {
+            button.material.color.setHex(0x4444ff);
+        });
     }
 }
 
