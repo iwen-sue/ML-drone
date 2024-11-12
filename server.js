@@ -34,7 +34,7 @@ app.get('/login', (req, res) => {
     // res.json({ message: "Profile page here", user: req.user });
 });
 
-app.get('/demo', (req, res) => {
+app.get('/demo', authenticateToken, (req, res) => {
     res.sendFile(__dirname + '/public/demo.html');
     // res.json({ message: "ML drone page here", user: req.user });
 });
@@ -48,7 +48,7 @@ app.get('/js/main.js', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'js', 'main.js'));
 });
 
-app.post('/generate-caption', upload.single('file'), MLController.generateCaption);
+app.post('/generate-caption', authenticateToken, upload.single('file'), MLController.generateCaption);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
