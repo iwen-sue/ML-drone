@@ -2,9 +2,11 @@ const jwt = require('jsonwebtoken');
 
 
 const authenticateToken = (req, res, next) => {
-    const token = req.cookies.token;
-    // const token = req.localstorage.getItem('token');
+    const authHeader = req.headers['authorization'];
+
+    const token = authHeader && authHeader.split(' ')[1];
     console.log("Token:" + token);
+    
     if (!token) return res.status(401).json({ message: 'Access denied' });
 
     try {
