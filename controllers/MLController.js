@@ -8,6 +8,9 @@ const generateImage = async (req, res) => {
   try {
     const user = await User.findOne({ email });
     user.reqCount += 1;
+    if (user.reqCount > 20) {
+      return res.status(400).json({ message: "Request limit exceeded" });
+    }
     await user.save();
 
     // Make image generation api call here
