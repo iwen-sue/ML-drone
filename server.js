@@ -6,6 +6,7 @@ const cors = require("cors");
 const authController = require("./controllers/authController");
 const MLController = require("./controllers/MLController");
 const adminController = require("./controllers/adminController");
+const accountController = require("./controllers/accountController");
 const authenticateToken = require("./middleware/authMiddleware");
 const isAdmin = require("./middleware/adminMiddleware");
 const connectDB = require("./config/db");
@@ -26,6 +27,7 @@ app.use(cookieParser());
 app.use(express.static("public")); // Serve static files
 
 app.post("/signup", authController.signup);
+
 app.post("/login", authController.login);
 
 app.get("/", (req, res) => {
@@ -48,7 +50,17 @@ app.get("/js/main.js", (req, res) => {
 app.post("/generate-image", authenticateToken, MLController.generateImage ); // To Modify
 
 app.get('/users', authenticateToken, isAdmin, adminController.getUsers);
+
 app.get('/api-calls', authenticateToken, isAdmin, adminController.getAPICalls);
+
+app.get('/account', authenticateToken, accountController.getAccount);
+
+app.post('/delete-account', authenticateToken, accountController.deleteAccount);
+
+app.post('/change-password', authenticateToken, accountController.changePassword);
+
+
+
 
 const PORT = process.env.PORT || 3000;
 
