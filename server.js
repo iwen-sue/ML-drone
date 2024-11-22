@@ -55,9 +55,9 @@ app.get('/api-calls', authenticateToken, isAdmin, adminController.getAPICalls);
 
 app.get('/account', authenticateToken, accountController.getAccount);
 
-app.post('/delete-account', authenticateToken, accountController.deleteAccount);
+app.delete('/delete-account', authenticateToken, accountController.deleteAccount);
 
-app.post('/change-password', authenticateToken, accountController.changePassword);
+app.patch('/change-password', authenticateToken, accountController.changePassword);
 
 
 
