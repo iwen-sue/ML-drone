@@ -1,14 +1,20 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
+const Endpoint = require('../models/Endpoint');
+const { updateEndpoint } = require('./endpointController');
 
 const signup = async (req, res) => {
     const { username, email, password } = req.body;
+    const pathname = req._parsedUrl.pathname;
 
     try {
         // Check if the user already exists
         const userExists = await User.findOne({ email });
         if (userExists) return res.status(400).json({ message: 'User already exists' });
+
+        // Add count to the endpoint
+        await updateEndpoint(pathname, 'POST');
 
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -25,11 +31,15 @@ const signup = async (req, res) => {
 
 const login = async (req, res) => {
     const { email, password } = req.body;
-
+    const pathname = req._parsedUrl.pathname;
+    
     try {
         // Find user by email
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+
+        // Add count to the endpoint
+        await updateEndpoint(pathname, 'POST');
 
         // Verify password
         const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -43,6 +53,7 @@ const login = async (req, res) => {
         res.json({ token });
         
     } catch (error) {
+        console.log(error);
         res.status(500).json({ message: 'Server error' });
     }
 };

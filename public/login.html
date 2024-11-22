@@ -11,6 +11,7 @@
     <!-- Signup Form -->
     <h2>Sign Up</h2>
     <form id="signupForm">
+        <input type="username" id="signupUsername" placeholder="Username" required>
         <input type="email" id="signupEmail" placeholder="Email" required>
         <input type="password" id="signupPassword" placeholder="Password" required>
         <button type="submit">Sign Up</button>
@@ -28,12 +29,13 @@
         // Sign up form submission
         document.getElementById('signupForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const username = document.getElementById('signupUsername').value;
             const email = document.getElementById('signupEmail').value;
             const password = document.getElementById('signupPassword').value;
             const response = await fetch('/signup', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({ username, email, password })
             });
             const data = await response.json();
             alert(data.message);

@@ -1,11 +1,12 @@
-const axios = require("axios");
-const FormData = require("form-data");
-const fs = require("fs");
 const User = require("../models/User");
 
 const generateImage = async (req, res) => {
   const email = req.user.email;
+  const pathname = req._parsedUrl.pathname;
+  
   try {
+    await updateEndpoint(pathname, "POST");
+
     const user = await User.findOne({ email });
     user.reqCount += 1;
     if (user.role !== 'admin' && user.reqCount > 20) {
