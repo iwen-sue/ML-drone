@@ -5,7 +5,9 @@ const cors = require("cors");
 
 const authController = require("./controllers/authController");
 const MLController = require("./controllers/MLController");
+const adminController = require("./controllers/adminController");
 const authenticateToken = require("./middleware/authMiddleware");
+const isAdmin = require("./middleware/adminMiddleware");
 const connectDB = require("./config/db");
 
 connectDB();
@@ -45,7 +47,11 @@ app.get("/js/main.js", (req, res) => {
 
 app.post("/generate-image", authenticateToken, MLController.generateImage ); // To Modify
 
+app.get('/users', authenticateToken, isAdmin, adminController.getUsers);
+app.get('/api-calls', authenticateToken, isAdmin, adminController.getAPICalls);
+
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
