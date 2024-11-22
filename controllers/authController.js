@@ -49,7 +49,6 @@ const login = async (req, res) => {
             httpOnly: true, 
             secure: process.env.NODE_ENV === 'production', 
             sameSite: 'None',
-            domain: process.env.NODE_ENV === 'production' ? 'comp4537t5frontend.netlify.app' : 'localhost'
          });
 
         res.json({ token });
