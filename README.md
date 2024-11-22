@@ -9,7 +9,7 @@
 | GET | /api-calls | Admin view for API request count for all 8 endpoints |
 | GET | /account | Users’ view for their account |
 | Delete | /delete-account | Users’ method to delete their account |
-| PATCH | /change-passowrd | User/Admin’s method to change their own password |
+| PATCH | /change-password | User/Admin’s method to change their own password |
 
 # Admin’s tables
 
