@@ -43,11 +43,7 @@ app.get("/js/main.js", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "js", "main.js"));
 }); // TO Remove
 
-app.post(
-  "/generate-image",
-  authenticateToken,
-  MLController.generateImage
-); // To Modify
+app.post("/generate-image", authenticateToken, MLController.generateImage ); // To Modify
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

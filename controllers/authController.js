@@ -37,8 +37,11 @@ const login = async (req, res) => {
 
         // Generate JWT token
         const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
         // res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'None' });
+
         res.json({ token });
+        
     } catch (error) {
         res.status(500).json({ message: 'Server error' });
     }
