@@ -3,10 +3,9 @@ const Endpoint = require('../models/Endpoint');
 const { updateEndpoint } = require('./endpointController');
 
 const getUsers = async (req, res) => {
-    const pathname = req._parsedUrl.pathname;
-    const method = req.method;
+
     try {
-        await updateEndpoint(pathname, method);
+        await updateEndpoint(req);
         const users = await User.find({ role : 'user'});
         res.json(users);
     } catch (error) {
@@ -15,11 +14,8 @@ const getUsers = async (req, res) => {
 };
 
 const getAPICalls = async (req, res) => {
-    const pathname = req._parsedUrl.pathname;
-    const method = req.method;
-
     try {
-        await updateEndpoint(pathname, method);
+        await updateEndpoint(req);
         const endpoints = await Endpoint.find();
         res.json(endpoints);
     } catch (error) {

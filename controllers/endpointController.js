@@ -1,6 +1,8 @@
 const Endpoint = require('../models/Endpoint');
 
-const updateEndpoint = async (pathname, method) => {
+const updateEndpoint = async (req) => {
+    const pathname = req._parsedUrl.pathname;
+    const method = req.method;
     try {
         await Endpoint.findOneAndUpdate({ name: `${pathname}` }, { 
             $inc: { reqCount: 1 },

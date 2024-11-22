@@ -4,11 +4,9 @@ const { updateEndpoint } = require('./endpointController');
 
 const getAccount = async (req, res) => {
     const { email } = req.user;
-    const pathname = req._parsedUrl.pathname;
-    const method = req.method;
 
     try {
-        await updateEndpoint(pathname, method);
+        await updateEndpoint(req);
         const user = await User.find({ email })
         res.json(user);
     } catch (error) {
@@ -18,11 +16,9 @@ const getAccount = async (req, res) => {
 
 const deleteAccount = async (req, res) => {
     const { email } = req.user;
-    const pathname = req._parsedUrl.pathname;
-    const method = req.method;
 
     try {
-        await updateEndpoint(pathname, method);
+        await updateEndpoint(req);
         const user = await User.findOneAndDelete({ email });
         res.status(200).json({ message: 'Account deleted successfully', user });
     } catch (error) {
@@ -33,11 +29,9 @@ const deleteAccount = async (req, res) => {
 const changePassword = async (req, res) => {
     const { email } = req.user;
     const { password } = req.body;
-    const pathname = req._parsedUrl.pathname;
-    const method = req.method;
 
     try {
-        await updateEndpoint(pathname, method);
+        await updateEndpoint(req);
         const hashedPassword = await bycrpt.hash(password, 10);
         // update the password of the user
         const user = await User.findOneAndUpdate({ email }, { password: hashedPassword }, { new: true });

@@ -3,11 +3,9 @@ const { updateEndpoint } = require("./endpointController");
 
 const generateImage = async (req, res) => {
   const email = req.user.email;
-  const pathname = req._parsedUrl.pathname;
-  const method = req.method;
   
   try {
-    await updateEndpoint(pathname, method);
+    await updateEndpoint(req);
 
     const user = await User.findOne({ email });
     user.reqCount += 1;
