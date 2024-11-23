@@ -54,7 +54,9 @@
             });
             const data = await response.json();
             if (data.token) {
-                // window.location.href = '/public/index.html';
+                // setTimeout(() => {
+                //     window.location.replace('/public/index.html');
+                // }, 1000);
             } else {
                 alert(data.message);
             }

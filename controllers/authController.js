@@ -50,7 +50,8 @@ const login = async (req, res) => {
             // secure: process.env.NODE_ENV === 'production', 
             secure: true,
             sameSite: 'None',
-            maxAge: 3600000
+            maxAge: 3600000,
+            path: '/',
          });
 
         res.json({ token, role: user.role });
