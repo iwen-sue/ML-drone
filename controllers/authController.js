@@ -9,7 +9,7 @@ const signup = async (req, res) => {
     try {
         // Check if the user already exists
         const userExists = await User.findOne({ email });
-        if (userExists) return res.status(400).json({ message: 'User already exists' });
+        if (userExists) return res.status(409).json({ message: 'User already exists' });
 
         // Add count to the endpoint
         await updateEndpoint(req);
@@ -33,14 +33,14 @@ const login = async (req, res) => {
     try {
         // Find user by email
         const user = await User.findOne({ email });
-        if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+        if (!user) return res.status(401).json({ message: 'Invalid credentials' });
 
         // Add count to the endpoint
         await updateEndpoint(req);
 
         // Verify password
         const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) return res.status(400).json({ message: 'Invalid credentials' });
+        if (!isPasswordValid) return res.status(401).json({ message: 'Invalid credentials' });
 
         // Generate JWT token
         const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
