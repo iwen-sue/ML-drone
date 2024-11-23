@@ -52,7 +52,7 @@ const login = async (req, res) => {
             maxAge: 3600000
          });
 
-        res.json({ token });
+        res.json({ token, role: user.role });
         
     } catch (error) {
         console.log(error);
