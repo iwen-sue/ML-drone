@@ -18,7 +18,11 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://127.0.0.1:5500", "https://comp4537t5frontend.netlify.app"],
+    origin: [
+      "http://127.0.0.1:5500", 
+      "https://comp4537t5frontend.netlify.app",
+      'https://beamish-churros-c5a572.netlify.app'
+    ],
     credentials: true,
   })
 );
