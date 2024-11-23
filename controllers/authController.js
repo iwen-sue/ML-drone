@@ -47,14 +47,13 @@ const login = async (req, res) => {
 
         res.cookie('token', token, { 
             httpOnly: true, 
-            // secure: process.env.NODE_ENV === 'production', 
             secure: true,
             sameSite: 'None',
             maxAge: 3600000,
             path: '/',
          });
 
-        res.json({ token, role: user.role });
+        res.json({ email: user.email , role: user.role });
         
     } catch (error) {
         console.log(error);
