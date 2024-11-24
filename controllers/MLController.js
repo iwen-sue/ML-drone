@@ -99,7 +99,7 @@ imageQueue.process(async (job) => {
         param_0: text || "Hello, World!"
       }),
       new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Prediction timeout')), 180000)
+        setTimeout(() => reject(new Error('Prediction timeout')), 250000)
       )
     ]);
 
