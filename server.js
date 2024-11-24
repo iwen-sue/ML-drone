@@ -53,6 +53,8 @@ app.get("/js/main.js", (req, res) => {
 
 app.post("/generate-image", authenticateToken, MLController.generateImage ); // To Modify
 
+app.get("/generate-image/status/:jobId", authenticateToken, MLController.getGenerationStatus);
+
 app.get('/users', authenticateToken, isAdmin, adminController.getUsers);
 
 app.get('/api-calls', authenticateToken, isAdmin, adminController.getAPICalls);
