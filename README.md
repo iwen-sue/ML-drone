@@ -4,6 +4,7 @@
 | --- | --- | --- |
 | POST | /signup | User sign up |
 | POST | /login | User log in |
+| POST | /logout | User log out |
 | POST | /generate-image | Initiate the Image generation process |
 | GET | /generate-image/status/:Id | Get image generation status and result data |
 | GET | /users | Admin view for users data |
