@@ -47,7 +47,7 @@ app.delete('/delete-account', authenticateToken, accountController.deleteAccount
 
 app.patch('/change-password', authenticateToken, accountController.changePassword);
 
-
+app.post('/logout', authenticateToken, authController.logout);
 
 
 const PORT = process.env.PORT || 3000;
