@@ -4,7 +4,8 @@
 | --- | --- | --- |
 | POST | /signup | User sign up |
 | POST | /login | User log in |
-| POST | /generate-image | Generate image for sketch |
+| POST | /generate-image | Initiate the Image generation process |
+| GET | /generate-image/status/:Id | Get image generation status and result data |
 | GET | /users | Admin view for users data |
 | GET | /api-calls | Admin view for API request count for all 8 endpoints |
 | GET | /account | Users’ view for their account |
